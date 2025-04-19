@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'entities/user.entity';
 import { AddUserDto } from 'src/dtos/user/add.user.dto';
 import { EditUserDto } from 'src/dtos/user/edit.user.dto';
+import { ApiResponse } from 'src/misc/api.response.class';
 import { Repository } from 'typeorm';
+import * as crypto from 'crypto'
 
 @Injectable()
 export class UserService {
@@ -15,11 +17,31 @@ export class UserService {
         return this.user.find()
     }
 
-    getById(id: number): Promise<User | null> {
-        return this.user.findOne({where: {userId: id}})
+    async getById(id: number): Promise<User | ApiResponse> {
+        const user = await this.user.findOne({where: {userId: id}})
+
+        if (user === null) {
+            return new ApiResponse("error", -1002, "user nije pronadjen")
+        }
+
+        return user
     }
 
-    add(data: AddUserDto): Promise<User> {
+    async getByEmail(email: string): Promise<User | null> {
+        const user = await this.user.findOne({
+            where: {
+                email: email
+            }
+        });
+
+        if (user) {
+            return user;
+        }
+
+        return null
+    }
+
+    add(data: AddUserDto): Promise<User | ApiResponse> {
         const crypto = require('crypto')
 
         const passwordHash = crypto.createHash('sha512');
@@ -31,14 +53,28 @@ export class UserService {
         newUser.email = data.email;
         newUser.password = passwordHashString;
 
-        return this.user.save(newUser)
+        return new Promise((resolve) => {
+            this.user.save(newUser).then(data => resolve(data))
+            .catch(error => {
+                const response: ApiResponse = new ApiResponse("error", -1001, "greska prilikom kreiranja usera");
+                resolve(response)
+            });
+        });
     }
 
-    async edit(id: number, data: EditUserDto): Promise<User> {
+    async edit(id: number, data: EditUserDto): Promise<User | ApiResponse> {
         let user = await this.user.findOne({where: {userId: id}})
 
+        if (user === undefined) {
+            return new Promise((resolve) => {
+                resolve(new ApiResponse("error", -1002, "user nije pronadjen"))
+            })
+        }
+
         if (!user) {
-            throw new Error(`Korisnik sa ID ${id} nije pronađen.`)
+            return new Promise((resolve) => {
+                resolve(new ApiResponse("error", -1002, "user nije pronadjen"))
+            })
         }
 
         const crypto = require('crypto')
