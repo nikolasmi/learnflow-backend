@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
-import { Category } from "entities/category.entity";
+import { Category } from "src/entities/category.entity";
 import { AddCategoryDto } from "src/dtos/category/add.category.dto";
 import { ApiResponse } from "src/misc/api.response.class";
 import { CategoryService } from "src/services/category/category.service";

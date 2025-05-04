@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { error } from "console";
-import { Category } from "entities/category.entity";
+import { Category } from "src/entities/category.entity";
 import { AddCategoryDto } from "src/dtos/category/add.category.dto";
 import { ApiResponse } from "src/misc/api.response.class";
 import { Repository } from "typeorm";

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { User } from 'entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { UserService } from '../services/user/user.service';
 
 @Controller()
