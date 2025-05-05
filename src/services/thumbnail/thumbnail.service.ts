@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TypeOrmCrudService } from "@nestjsx/crud-typeorm";
-import { Course } from "src/entities/course.entity";
 import { Thumbnail } from "src/entities/thumbnail.entity";
 import { Repository } from "typeorm";
 
@@ -16,5 +15,9 @@ export class ThumbnailService extends TypeOrmCrudService<Thumbnail> {
 
     add(newThumbnail: Thumbnail): Promise<Thumbnail> {
         return this.thumbnail.save(newThumbnail);
+    }
+
+    async deleteById(id: number) {
+        return await this.thumbnail.delete(id)
     }
 }

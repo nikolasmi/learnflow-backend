@@ -20,6 +20,8 @@ import { diskStorage } from 'multer';
 import { ThumbnailService } from 'src/services/thumbnail/thumbnail.service';
 import { Thumbnail } from 'src/entities/thumbnail.entity';
 import { ApiResponse } from 'src/misc/api.response.class';
+import * as fileType from 'file-type'
+import * as fs from 'fs'
   
   @Controller('api/course')
   export class CourseController {
@@ -62,7 +64,7 @@ import { ApiResponse } from 'src/misc/api.response.class';
     @Post(':id/upload-thumbnail')
     @UseInterceptors(FileInterceptor('thumbnail', {
       storage: diskStorage({
-        destination: StorageConfig.thumbnailDetination,
+        destination: StorageConfig.thumbnailDestination,
         filename: (req, file, callback) => {
           let original: string = file.originalname;
 
@@ -112,6 +114,18 @@ import { ApiResponse } from 'src/misc/api.response.class';
         return new ApiResponse('error', -4002, "file not uploaded")
       }
 
+      const fileTypeResult = await fileType.fromFile(thumbnail.path)
+      if (!fileTypeResult) {
+        fs.unlinkSync(thumbnail.path)
+        return new ApiResponse('error', -4002, "file type not detected") 
+      }
+
+      const realMimeType = fileTypeResult.mime
+      if (!(realMimeType.includes('jpeg') || realMimeType.includes('png'))) {
+        fs.unlinkSync(thumbnail.path)
+        return new ApiResponse('error', -4002, "bad file content type")
+      }
+
       const newThumbnail: Thumbnail = new Thumbnail();
       newThumbnail.courseId = courseId;
       newThumbnail.imagePath = thumbnail.filename
@@ -122,6 +136,29 @@ import { ApiResponse } from 'src/misc/api.response.class';
       }
 
       return savedThumbnail
+    }
+
+    @Delete(':courseId/deleteThumbnail/:thumbnailId')
+    public async deleteThumbnail(@Param('courseId') courseId: number, @Param('thumbnailId') thumbnailId: number) {
+      const thumbnail = await this.thumbnailService.findOne({where: {courseId: courseId, thumbnailId: thumbnailId}})
+      
+      if (!thumbnail) {
+        return new ApiResponse('error', -4004, "thumbnail not found")
+      }
+      
+      try {
+        fs.unlinkSync(StorageConfig.thumbnailDestination + thumbnail.imagePath);
+      } catch (err) {
+        
+      }
+      
+      const deleteResult = await this.thumbnailService.deleteById(thumbnailId)
+      
+      if (deleteResult.affected === 0) {
+        return new ApiResponse('error', -4004, "thumbnail not found")
+      }
+      
+      return new ApiResponse('ok', 0, "Thumbnail deleted")
     }
     
     @Get()

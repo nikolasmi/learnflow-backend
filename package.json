@@ -26,6 +26,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjsx/crud": "^5.0.0-alpha.3",
     "@nestjsx/crud-typeorm": "^5.0.0-alpha.3",
+    "file-type": "^16.5.3",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.2.2",
