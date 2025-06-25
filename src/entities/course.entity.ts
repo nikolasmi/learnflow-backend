@@ -12,6 +12,7 @@ import { Category } from "./category.entity";
 import { User } from "./user.entity";
 import { Lesson } from "./lesson.entity";
 import { Purchase } from "./purchase.entity";
+import { Thumbnail } from "./thumbnail.entity";
 
 @Index("fk_course_category_id", ["categoryId"], {})
 @Index("fk_course_user_id", ["userId"], {})
@@ -43,6 +44,9 @@ export class Course {
 
   @Column("int", { name: "user_id", unsigned: true })
   userId: number;
+  
+  @Column("int", { name: "thumbnail_id", unsigned: true })
+  thumbnailId: number | null;
 
   @Column("datetime", { name: "created_at", default: () => "'now()'" })
   createdAt: Date;
@@ -63,6 +67,15 @@ export class Course {
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "userId" }])
   user: User;
+
+  @ManyToOne(() => Thumbnail, {
+    eager: true,
+    nullable: true,
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE",
+  })
+  @JoinColumn([{ name: "thumbnail_id", referencedColumnName: "thumbnailId" }])
+  thumbnail: Thumbnail
 
   @OneToMany(() => Lesson, (lesson) => lesson.course)
   lessons: Lesson[];

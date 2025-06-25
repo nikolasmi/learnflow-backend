@@ -23,7 +23,7 @@ export class CourseService {
   }
 
   async findAll(): Promise<Course[]> {
-    return this.courseRepository.find({ relations: ['category', 'user'] });
+    return this.courseRepository.find({ relations: ['category', 'user', 'thumbnail'] });
   }
 
   async findOne(id: number): Promise<Course> {

@@ -6,4 +6,5 @@ export class AddCourseDto {
   //thumbnailUrl: string;
   categoryId: number;
   userId: number;
+  thumbnailId: number | null;
 }

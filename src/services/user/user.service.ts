@@ -52,6 +52,8 @@ export class UserService {
         newUser.name = data.name;
         newUser.email = data.email;
         newUser.password = passwordHashString;
+        newUser.surname = data.surname;
+        newUser.phone = data.phone;
 
         return new Promise((resolve) => {
             this.user.save(newUser).then(data => resolve(data))

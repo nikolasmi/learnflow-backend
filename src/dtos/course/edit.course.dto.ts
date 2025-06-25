@@ -5,4 +5,5 @@ export class EditCourseDto {
   price?: number;
   //thumbnailUrl?: string;
   categoryId?: number;
+  thumbnailId?: number | null
 }

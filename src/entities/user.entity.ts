@@ -16,6 +16,12 @@ export class User {
 
   @Column("varchar", { name: "password", length: 255 })
   password: string;
+  
+  @Column("varchar", { name: "surname", length: 255 })
+  surname: string;
+  
+  @Column("varchar", { name: "phone", length: 20 })
+  phone: string;
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
