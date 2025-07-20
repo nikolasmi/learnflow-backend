@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
 import { User } from "src/entities/user.entity";
 import { AddUserDto } from "src/dtos/user/add.user.dto";
-import { EditUserDto } from "src/dtos/user/edit.user.dto";
+import { EditUserPasswordDto } from "src/dtos/user/edit.user.password.dto";
 import { ApiResponse } from "src/misc/api.response.class";
 import { UserService } from "src/services/user/user.service";
+import { EditUserDetailsDto } from "src/dtos/user/edit.user.details.dto";
 
 @Controller('api/user')
 export class UserController {
@@ -34,8 +35,13 @@ export class UserController {
         return this.userService.add(data)
     }
 
-    @Put(':id')
-    edit(@Param('id') id: number, @Body() data: EditUserDto): Promise<User | ApiResponse> {
-        return this.userService.edit(id, data)
+    @Put(':id/details')
+    editDetails(@Param('id') id: number, @Body() data: EditUserDetailsDto): Promise<User | ApiResponse> {
+        return this.userService.editDetails(id, data)
+    }
+
+    @Put(':id/password')
+    editPassword(@Param('id') id: number, @Body() data: EditUserPasswordDto): Promise<User | ApiResponse> {
+        return this.userService.editPassword(id, data)
     }
 }

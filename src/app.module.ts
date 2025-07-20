@@ -23,6 +23,14 @@ import { CourseController } from './controllers/api/course.controller';
 import { CourseService } from './services/course/course.service';
 import { Thumbnail } from './entities/thumbnail.entity';
 import { ThumbnailService } from './services/thumbnail/thumbnail.service';
+import { UserToken } from './entities/user-token.entity';
+import { LessonService } from './services/lesson/lesson.service';
+import { LessonController } from './controllers/api/lesson.controller';
+import { UserDashboardController } from './controllers/api/user.dashboard.controller';
+import { UserDashboardService } from './services/user/user.dashboard.service';
+import { PurchaseController } from './controllers/api/purchase.controller';
+import { PurchaseService } from './services/purchase/purchase.service';
+import { Wishlist } from './entities/wishlist';
 
 @Module({
   imports: [
@@ -33,13 +41,13 @@ import { ThumbnailService } from './services/thumbnail/thumbnail.service';
       username: DatabaseConfiguration.username,
       password: DatabaseConfiguration.password,
       database: DatabaseConfiguration.database,
-      entities: [ User, Admin, Category, Comment, Course, Lesson, Purchase, Thumbnail ]
+      entities: [ User, Admin, Category, Comment, Course, Lesson, Purchase, Thumbnail, UserToken, Wishlist ]
     }),
-    TypeOrmModule.forFeature([ User, Admin, Category, Comment, Course, Thumbnail ])
+    TypeOrmModule.forFeature([ User, Admin, Category, Comment, Course, Thumbnail, UserToken, Lesson, Purchase, Wishlist ])
   ],
-  controllers: [AppController, UserController, AuthController, AdminController, CategoryController, CommentController, CourseController],
-  providers: [UserService, AdminService, CategoryService, CommentService, CourseService, ThumbnailService],
-  exports: [AdminService, UserService, ThumbnailService],
+  controllers: [AppController, UserController, AuthController, AdminController, UserDashboardController, CategoryController, CommentController, CourseController, LessonController, PurchaseController],
+  providers: [UserService, AdminService, CategoryService, CommentService, CourseService, UserDashboardService, ThumbnailService, LessonService, PurchaseService],
+  exports: [AdminService, UserService, ThumbnailService, LessonService, UserDashboardService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

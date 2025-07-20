@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Comment } from "./comment.entity";
 import { Course } from "./course.entity";
 import { Purchase } from "./purchase.entity";
+import { Wishlist } from "./wishlist";
 
 @Entity("user")
 export class User {
@@ -31,4 +32,8 @@ export class User {
 
   @OneToMany(() => Purchase, (purchase) => purchase.user)
   purchases: Purchase[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
+  wishlist: Wishlist[];
+
 }

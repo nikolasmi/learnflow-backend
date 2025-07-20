@@ -12,6 +12,12 @@ async function bootstrap() {
     index: false,
   })
 
+  app.useStaticAssets(StorageConfig.lessonVideoDestination, {
+    prefix: StorageConfig.videoUrlPrefix,
+    maxAge: StorageConfig.maxAge, //7 dana
+    index: false,
+  })
+
   app.enableCors({
     origin: 'http://localhost:5173', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', 

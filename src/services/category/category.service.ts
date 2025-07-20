@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { error } from "console";
 import { Category } from "src/entities/category.entity";
 import { AddCategoryDto } from "src/dtos/category/add.category.dto";
 import { ApiResponse } from "src/misc/api.response.class";
@@ -52,5 +51,10 @@ export class CategoryService {
         } catch (error) {
             return new ApiResponse("error", -3001)
         }
+    }
+
+    async popular(): Promise<Category[]> {
+        const cateogries = await this.getAll()
+        return cateogries.slice(0,3)
     }
 }

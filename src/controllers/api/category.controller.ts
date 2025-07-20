@@ -16,6 +16,11 @@ export class CategoryController {
         return this.categoryService.getAll()
     }
 
+    @Get('/popular')
+    popular() {
+      return this.categoryService.popular()
+    }
+
     @Get(':id')
     getById(@Param('id') categoryId: number): Promise<Category | ApiResponse> {
         return new Promise(async (resolve) => {

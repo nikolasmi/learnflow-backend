@@ -13,6 +13,7 @@ import { User } from "./user.entity";
 import { Lesson } from "./lesson.entity";
 import { Purchase } from "./purchase.entity";
 import { Thumbnail } from "./thumbnail.entity";
+import { Wishlist } from "./wishlist";
 
 @Index("fk_course_category_id", ["categoryId"], {})
 @Index("fk_course_user_id", ["userId"], {})
@@ -82,4 +83,7 @@ export class Course {
 
   @OneToMany(() => Purchase, (purchase) => purchase.course)
   purchases: Purchase[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.course)
+  wishlist: Wishlist[];
 }

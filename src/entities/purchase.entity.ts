@@ -25,6 +25,9 @@ export class Purchase {
   @Column("datetime", { name: "purchased_at", default: () => "'now()'" })
   purchasedAt: Date;
 
+  @Column("double", {name: "price", unsigned: true})
+  price: number
+
   @ManyToOne(() => Course, (course) => course.purchases, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",

@@ -55,6 +55,15 @@ export class CourseService {
       relations: ['category', 'user'],
     });
     
-    return courses.slice(0, 3);
+    return courses.slice(0, 6);
+  }
+
+  async findByCategoryId(categoryId: number): Promise<Course[]> {
+    return this.courseRepository.find({
+      where: {
+        category: { categoryId }
+      },
+      relations: ['category', 'user', 'thumbnail']
+    });
   }
 }

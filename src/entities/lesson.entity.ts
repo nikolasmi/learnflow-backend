@@ -1,10 +1,10 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Course } from "./course.entity";
 
 @Index("fk_lesson_course_id", ["courseId"], {})
 @Entity("lesson")
 export class Lesson {
-  @Column("int", { primary: true, name: "lesson_id", unsigned: true })
+  @PrimaryGeneratedColumn({ type: "int", name: "lesson_id", unsigned: true })
   lessonId: number;
 
   @Column("int", { name: "course_id", unsigned: true })
@@ -15,6 +15,9 @@ export class Lesson {
 
   @Column("varchar", { name: "video_url", length: 255 })
   videoUrl: string;
+  
+  @Column("text", { name: "description" })
+  description: string;
 
   @Column("int", { name: "order_number" })
   orderNumber: number;

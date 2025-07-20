@@ -2,16 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { AddUserDto } from 'src/dtos/user/add.user.dto';
-import { EditUserDto } from 'src/dtos/user/edit.user.dto';
+import { EditUserPasswordDto } from 'src/dtos/user/edit.user.password.dto';
 import { ApiResponse } from 'src/misc/api.response.class';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto'
+import { UserToken } from 'src/entities/user-token.entity';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { EditUserDetailsDto } from 'src/dtos/user/edit.user.details.dto';
 
 @Injectable()
-export class UserService {
+export class UserService extends TypeOrmCrudService<User>{
     constructor(
-        @InjectRepository(User) private readonly user: Repository<User>
-    ) { }
+        @InjectRepository(User) private readonly user: Repository<User>,
+        @InjectRepository(UserToken) private readonly userToken: Repository<UserToken>
+    ) {
+        super(user);
+     }
 
     getAll(): Promise<User[]> {
         return this.user.find()
@@ -64,7 +70,22 @@ export class UserService {
         });
     }
 
-    async edit(id: number, data: EditUserDto): Promise<User | ApiResponse> {
+    async editDetails(id: number, data: EditUserDetailsDto): Promise<User | ApiResponse> {
+        const user = await this.user.findOne({ where: { userId: id } })
+
+        if (!user) {
+            return new ApiResponse("error", -1002, "user nije pronadjen")
+        }
+
+        user.name = data.name
+        user.surname = data.surname
+        user.email = data.email
+        user.phone = data.phone
+
+        return this.user.save(user)
+    }
+
+    async editPassword(id: number, data: EditUserPasswordDto): Promise<User | ApiResponse> {
         let user = await this.user.findOne({where: {userId: id}})
 
         if (user === undefined) {
@@ -88,4 +109,47 @@ export class UserService {
 
         return this.user.save(user)
     } 
+
+    async addToken(user_id: number, token: string, expiresAt: string) {
+        const userToken = new UserToken()
+        userToken.userId = user_id;
+        userToken.token = token
+        userToken.expiresAt = expiresAt
+
+        return await this.userToken.save(userToken)
+    }
+
+    async getUserToken(token: string): Promise<UserToken | null> {
+        return await this.userToken.findOne({where: {token: token}});
+    }
+
+    async invalidateToken(token: string): Promise<UserToken | ApiResponse> {
+        const userToken = await this.userToken.findOne({ where: { token: token } });
+    
+        if (!userToken) {
+            return new ApiResponse('Error', -10001, "Ne postoji takav token");
+        }
+    
+        userToken.isValid = 0;
+        await this.userToken.save(userToken);
+    
+        const updatedToken = await this.getUserToken(token);
+        if (!updatedToken) {
+            return new ApiResponse('Error', -10002, "Token nije validan nakon pokušaja deaktivacije");
+        }
+    
+        return updatedToken;
+    }
+    
+    async invalidateUserToken(userId: number): Promise<(UserToken | ApiResponse)[]> {
+        const userTokens = await this.userToken.find({ where: { userId: userId } });
+    
+        const results: Promise<UserToken | ApiResponse>[] = [];
+    
+        for (const userToken of userTokens) {
+            results.push(this.invalidateToken(userToken.token));
+        }
+    
+        return await Promise.all(results);
+    }    
 }
