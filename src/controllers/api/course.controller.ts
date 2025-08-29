@@ -227,12 +227,27 @@ export class CourseController {
     return new ApiResponse('ok', 0, 'Thumbnail deleted');
   }
 
+  // @Get()
+  // findAll(@Query('categoryId') categoryId?: string) {
+  //   if (categoryId) {
+  //     return this.courseService.findByCategoryId(Number(categoryId));
+  //   }
+  //   return this.courseService.findAll();
+  // }
+
   @Get()
-  findAll(@Query('categoryId') categoryId?: string) {
-    if (categoryId) {
-      return this.courseService.findByCategoryId(Number(categoryId));
-    }
-    return this.courseService.findAll();
+  findAll(
+    @Query('categoryId') categoryId?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('maxPrice') maxPrice?: string,
+  ) {
+    return this.courseService.filterCourses(
+      categoryId ? Number(categoryId) : undefined,
+      dateFrom ? new Date(dateFrom) : undefined,
+      dateTo ? new Date(dateTo) : undefined,
+      maxPrice ? Number(maxPrice) : undefined,
+    );
   }
 
   @Get('/popular')

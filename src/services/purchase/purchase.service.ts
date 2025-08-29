@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { error } from "console";
 import { AddPurchaseDto } from "src/dtos/purchase/add.purchase.dto";
 import { Purchase } from "src/entities/purchase.entity";
 import { ApiResponse } from "src/misc/api.response.class";
@@ -36,7 +35,7 @@ export class PurchaseService {
 
         return new Promise((resolve => {
             this.PurchaseRepository.save(newPurchase).then(data => resolve(data)).catch(error => {
-                const response: ApiResponse = new ApiResponse('error', -8001, "greska se dogodila prilikom kreiranja kupovine")
+                const response: ApiResponse = new ApiResponse('error', -8001, "greska se dogodila prilikom kupovine")
             })
         }))
     }

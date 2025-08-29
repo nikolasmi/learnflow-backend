@@ -31,6 +31,8 @@ import { UserDashboardService } from './services/user/user.dashboard.service';
 import { PurchaseController } from './controllers/api/purchase.controller';
 import { PurchaseService } from './services/purchase/purchase.service';
 import { Wishlist } from './entities/wishlist';
+import { WishlistController } from './controllers/api/wishlist.controller';
+import { WishlistService } from './services/wishlist/wishlist.service';
 
 @Module({
   imports: [
@@ -45,8 +47,8 @@ import { Wishlist } from './entities/wishlist';
     }),
     TypeOrmModule.forFeature([ User, Admin, Category, Comment, Course, Thumbnail, UserToken, Lesson, Purchase, Wishlist ])
   ],
-  controllers: [AppController, UserController, AuthController, AdminController, UserDashboardController, CategoryController, CommentController, CourseController, LessonController, PurchaseController],
-  providers: [UserService, AdminService, CategoryService, CommentService, CourseService, UserDashboardService, ThumbnailService, LessonService, PurchaseService],
+  controllers: [AppController, UserController, AuthController, AdminController, UserDashboardController, CategoryController, CommentController, CourseController, LessonController, PurchaseController, WishlistController],
+  providers: [UserService, AdminService, CategoryService, CommentService, CourseService, UserDashboardService, ThumbnailService, LessonService, PurchaseService, WishlistService],
   exports: [AdminService, UserService, ThumbnailService, LessonService, UserDashboardService],
 })
 export class AppModule implements NestModule {

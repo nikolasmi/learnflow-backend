@@ -5,6 +5,7 @@ import { Purchase } from 'src/entities/purchase.entity';
 import { Course } from 'src/entities/course.entity';
 import { Comment } from 'src/entities/comment.entity';
 import { User } from 'src/entities/user.entity';
+import { Wishlist } from 'src/entities/wishlist';
 
 @Injectable()
 export class UserDashboardService {
@@ -13,19 +14,24 @@ export class UserDashboardService {
     @InjectRepository(Course) private readonly courseRepo: Repository<Course>,
     @InjectRepository(Comment) private readonly commentRepo: Repository<Comment>,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Wishlist) private readonly wishlistRepo: Repository<Wishlist>, // Inject wishlist repozitorijum
   ) {}
 
   async getUserDashboard(userId: number) {
+    // Kupovine korisnika
     const purchasedCourses = await this.purchaseRepo.find({
       where: { userId },
       relations: ['course'],
       order: { purchasedAt: 'DESC' },
     });
 
+    // Ukupno potrošeno
     const totalSpent = purchasedCourses.reduce((sum, p) => sum + Number(p.price || 0), 0);
 
+    // Broj komentara korisnika
     const commentCount = await this.commentRepo.count({ where: { user: { userId } } });
 
+    // Kursevi koje je korisnik kreirao
     const createdCourses = await this.courseRepo.find({
       where: { userId },
       relations: ['lessons'],
@@ -34,15 +40,20 @@ export class UserDashboardService {
 
     const courseIds = createdCourses.map(c => c.courseId);
 
+    // Ukupno zarada od sopstvenih kurseva
     let totalEarned = 0;
-
     if (courseIds.length > 0) {
       const purchasesOfOwnCourses = await this.purchaseRepo.find({
         where: { courseId: In(courseIds) },
       });
-
       totalEarned = purchasesOfOwnCourses.reduce((sum, p) => sum + Number(p.price || 0), 0);
     }
+
+    // Wishlist korisnika
+    const wishlistItems = await this.wishlistRepo.find({
+      where: { user: { userId } },
+      relations: ['course'],
+    });
 
     return {
       totalPurchases: purchasedCourses.length,
@@ -67,6 +78,14 @@ export class UserDashboardService {
         thumbnailUrl: c.thumbnail,
       })),
       totalEarned: totalEarned.toFixed(2),
+
+      // Dodaj wishlist u odgovor
+      wishlist: wishlistItems.map((item) => ({
+        courseId: item.course?.courseId || null,
+        title: item.course?.title || '',
+        shortDescription: item.course?.shortDescription || '',
+        thumbnail: item.course?.thumbnail || null,
+      })),
     };
   }
 }

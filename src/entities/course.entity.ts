@@ -34,12 +34,6 @@ export class Course {
   @Column("decimal", { name: "price", unsigned: true, precision: 10, scale: 2 })
   price: string;
 
-  // @Column("varchar", { name: "thumbnail_url", length: 255 })
-  // thumbnailUrl: string;
-
-  // @Column("varchar", { name: "video_url", length: 255 })
-  // videoUrl: string;
-
   @Column("int", { name: "category_id", unsigned: true })
   categoryId: number;
 

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from 'src/entities/course.entity';
 import { AddCourseDto } from 'src/dtos/course/add.course.dto';
 import { EditCourseDto } from 'src/dtos/course/edit.course.dto';
-import { Repository } from 'typeorm';
+import { Between, FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 
 @Injectable()
 export class CourseService {
@@ -64,6 +64,36 @@ export class CourseService {
         category: { categoryId }
       },
       relations: ['category', 'user', 'thumbnail']
+    });
+  }
+
+  async filterCourses(
+    categoryId?: number,
+    dateFrom?: Date,
+    dateTo?: Date,
+    maxPrice?: number
+  ): Promise<Course[]> {
+    const where: FindOptionsWhere<Course> = {};
+
+    if (categoryId) {
+      where.category = { categoryId };
+    }
+
+    if (dateFrom && dateTo) {
+      where.createdAt = Between(dateFrom, dateTo);
+    } else if (dateFrom) {
+      where.createdAt = MoreThanOrEqual(dateFrom);
+    } else if (dateTo) {
+      where.createdAt = LessThanOrEqual(dateTo);
+    }
+
+    if (maxPrice) {
+      where.price = LessThanOrEqual(maxPrice.toString());
+    }
+
+    return this.courseRepository.find({
+      where,
+      relations: ['category', 'user', 'thumbnail'],
     });
   }
 }

@@ -1,11 +1,6 @@
 import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+  Column, Entity, Index,
+  JoinColumn, ManyToOne,  PrimaryGeneratedColumn,} from "typeorm";
 import { Course } from "./course.entity";
 import { User } from "./user.entity";
 

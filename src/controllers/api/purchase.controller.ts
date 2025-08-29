@@ -20,7 +20,7 @@ export class PurchaseController {
         return new Promise(async (resolve) => {
             let purchase = await this.purchaseService.getById(purchaseId)
             if (purchase === null) {
-                resolve(new ApiResponse('error', -8002, "kupovina sa datim id nije pronadjen"))
+                resolve(new ApiResponse('error', -8002, "kupovina sa datim id nije pronadjenа"))
             }
             resolve(purchase)
         })
